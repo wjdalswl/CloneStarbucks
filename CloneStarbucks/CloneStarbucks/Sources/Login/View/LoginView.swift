@@ -12,16 +12,18 @@ public struct LoginView: View {
     public init() {}
     
     public var body: some View {
-        VStack(spacing: 104) {
+        VStack {
+            Spacer()
             LoginHeaderView()
-            
+            Spacer()
             CredentialFieldsSection {
                 CredentialField(title: "아이디")
                 CredentialField(title: "비밀번호")
             }
-            
+            Spacer()
             LoginFooterView()
                 .padding(.horizontal, 48)
+            Spacer()
         }
         .padding(.horizontal, 19)
     }
@@ -41,6 +43,7 @@ fileprivate struct LoginHeaderView: View {
                     .foregroundStyle(Color.black)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.leading)
+                    .lineLimit(2)
 
                 Text("회원 서비스 이용을 위해 로그인 해주세요")
                     .foregroundStyle(Color.gray01)
