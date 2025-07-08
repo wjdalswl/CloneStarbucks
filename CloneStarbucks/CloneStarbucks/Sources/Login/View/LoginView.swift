@@ -25,7 +25,7 @@ public struct LoginView: View {
                 .padding(.horizontal, 48)
             Spacer()
         }
-        .padding(.horizontal, 19)
+        .safeAreaPadding(.horizontal, 19)
     }
 }
 
@@ -67,7 +67,7 @@ fileprivate struct CredentialFieldsSection<Content: View>: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 46)
                     .background(Color.green01)
-                    .cornerRadius(20)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
             }
         }
     }
