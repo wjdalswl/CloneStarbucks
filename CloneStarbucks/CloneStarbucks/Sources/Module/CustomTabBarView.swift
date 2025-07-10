@@ -28,7 +28,7 @@ struct CustomTabBarView: View {
             ContentView()
                 .tag(TabBarItem.shop)
 
-            ContentView()
+            OtherView(viewModel: OtherViewModel())
                 .tag(TabBarItem.other)
         }
         .overlay(alignment: .bottom) {
