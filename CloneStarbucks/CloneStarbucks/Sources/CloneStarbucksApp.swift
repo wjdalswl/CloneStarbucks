@@ -4,7 +4,7 @@ import SwiftUI
 struct CloneStarbucksApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CustomTabBarView()
         }
     }
 }
