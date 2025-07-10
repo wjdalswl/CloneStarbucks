@@ -7,25 +7,36 @@
 
 import SwiftUI
 
-public struct LoginView: View {
+struct LoginView: View {
+    // MARK: - Properties
     
-    public init() {}
+    @StateObject private var viewModel: LoginViewModel
     
-    public var body: some View {
+    // MARK: - Init
+    
+    /// LoginView
+    /// - Parameter viewModel: LoginViewModel
+    init(viewModel: LoginViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+    
+    // MARK: - Body
+    
+    var body: some View {
         VStack {
             Spacer()
             LoginHeaderView()
             Spacer()
-            CredentialFieldsSection {
-                CredentialField(title: "아이디")
-                CredentialField(title: "비밀번호")
-            }
+            CredentialFieldsSection(viewModel: viewModel)
             Spacer()
             LoginFooterView()
                 .padding(.horizontal, 48)
             Spacer()
         }
         .safeAreaPadding(.horizontal, 19)
+        .task {
+            UIApplication.shared.hideKeyboard()
+        }
     }
 }
 
@@ -54,36 +65,27 @@ fileprivate struct LoginHeaderView: View {
 }
 
 /// 아이디, 비밀번호 입력 섹션
-fileprivate struct CredentialFieldsSection<Content: View>: View {
-    @ViewBuilder let content: Content
+fileprivate struct CredentialFieldsSection: View {
+    @ObservedObject var viewModel: LoginViewModel
 
     var body: some View {
         VStack(spacing: 47) {
-            content
-            Button(action: {}) {
-                Text("로그인하기")
-                    .font(.MainTextMedium16)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 46)
-                    .background(Color.green01)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-            }
-        }
-    }
-}
-    
-fileprivate struct CredentialField: View {
-    let title: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.MainTextRegular13)
-                .foregroundStyle(Color.black01)
-                .padding(.bottom, 2)
+            CustomTextField(
+                text: $viewModel.id,
+                placeholder: "아이디"
+            )
+            CustomTextField(
+                text: $viewModel.pwd,
+                placeholder: "비밀번호"
+            )
             
-            Divider()
+            MainBottomButton(
+                type: .login(
+                    isDisabled: viewModel.isLoginDisabled
+                ),
+                action: { print("로그인하기 클릭됨") }
+            )
+            .disabled(viewModel.isLoginDisabled)
         }
     }
 }
@@ -118,5 +120,5 @@ fileprivate struct LoginFooterView: View {
 }
 
 #Preview {
-    LoginView()
+    LoginView(viewModel: LoginViewModel())
 }
