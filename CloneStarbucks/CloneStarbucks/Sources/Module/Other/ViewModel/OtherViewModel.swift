@@ -7,13 +7,12 @@
 
 import SwiftUI
 
-class OtherViewModel: ObservableObject {
-    // MARK: - Properties
+@Observable
+class OtherViewModel {
+    // MARK: - Methods
     
-    @AppStorage("signupInfo") private var signupInfo: Data = Data()
-    
-    var nickname: String {
-        if let user = try? JSONDecoder().decode(SignupModel.self, from: signupInfo) {
+    func nickname(from data: Data) -> String {
+        if let user = try? JSONDecoder().decode(SignupModel.self, from: data) {
             return user.nickname
         }
         return "(작성한 닉네임)"

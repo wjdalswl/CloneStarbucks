@@ -7,14 +7,13 @@
 
 import SwiftUI
 
-class SignupViewModel: ObservableObject {
+@Observable
+class SignupViewModel {
     // MARK: - Properties
     
-    @Published var nickname: String = ""
-    @Published var email: String = ""
-    @Published var password: String = ""
-    
-    @AppStorage("signupInfo") private var signupInfo: Data = Data()
+    var nickname: String = ""
+    var email: String = ""
+    var password: String = ""
     
     var isCreateDisabled: Bool {
         nickname.isEmpty || email.isEmpty || password.isEmpty
@@ -22,14 +21,8 @@ class SignupViewModel: ObservableObject {
     
     // MARK: - Methods
     
-    func saveUser() {
-        let user = SignupModel(
-            nickname: nickname,
-            email: email,
-            password: password
-        )
-        if let data = try? JSONEncoder().encode(user) {
-            signupInfo = data
-        }
+    func encodeUser() -> Data? {
+        let user = SignupModel(nickname: nickname, email: email, password: password)
+        return try? JSONEncoder().encode(user)
     }
 }

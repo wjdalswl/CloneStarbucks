@@ -10,14 +10,15 @@ import SwiftUI
 struct SignupView: View {
     // MARK: - Properties
     
-    @StateObject private var viewModel: SignupViewModel
+    @State private var viewModel: SignupViewModel
+    @AppStorage("signupInfo") private var signupInfo: Data = Data()
     
     // MARK: - Init
     
     /// LoginView
     /// - Parameter viewModel: SignupViewModel
     init(viewModel: SignupViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = State(initialValue: viewModel)
     }
     
     // MARK: - Body
@@ -32,9 +33,16 @@ struct SignupView: View {
                 .frame(maxHeight: 428)
         }
         .safeAreaInset(edge: .bottom) {
-            SignupBottomSection(viewModel: viewModel)
+            SignupBottomSection(
+                viewModel: viewModel,
+                onSignupComplete: {
+                    if let encoded = viewModel.encodeUser() {
+                        signupInfo = encoded
+                    }
+                }
+            )
+            .safeAreaPadding(.horizontal, 19)
         }
-        .safeAreaPadding(.horizontal, 19)
         .task {
             UIApplication.shared.hideKeyboard()
         }
@@ -43,7 +51,7 @@ struct SignupView: View {
 
 /// 텍스트 필드 세션
 fileprivate struct SignupFieldSection: View {
-    @ObservedObject var viewModel: SignupViewModel
+    @Bindable var viewModel: SignupViewModel
 
     var body: some View {
         VStack(spacing: 49) {
@@ -63,17 +71,19 @@ fileprivate struct SignupFieldSection: View {
                 type: .signup
             )
         }
+        .padding(.horizontal, 19)
     }
 }
 
 /// 하단 버튼 세션
 fileprivate struct SignupBottomSection: View {
-    @ObservedObject var viewModel: SignupViewModel
-
+    var viewModel: SignupViewModel
+    let onSignupComplete: () -> Void
+    
     var body: some View {
         MainBottomButton(
             type: .create(isDisabled: viewModel.isCreateDisabled),
-            action: viewModel.saveUser
+            action: onSignupComplete
         )
         .disabled(viewModel.isCreateDisabled)
         .safeAreaPadding(.bottom, 20)

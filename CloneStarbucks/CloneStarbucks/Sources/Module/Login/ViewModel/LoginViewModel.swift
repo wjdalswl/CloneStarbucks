@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-class LoginViewModel: ObservableObject {
+@Observable
+class LoginViewModel {
     // MARK: - Properties
     
-    @Published var id: String = ""
-    @Published var pwd: String = ""
+    var id: String = ""
+    var pwd: String = ""
     
     var isLoginDisabled: Bool {
         id.isEmpty || pwd.isEmpty

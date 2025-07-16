@@ -10,14 +10,14 @@ import SwiftUI
 struct LoginView: View {
     // MARK: - Properties
     
-    @StateObject private var viewModel: LoginViewModel
+    @State private var viewModel: LoginViewModel
     
     // MARK: - Init
     
     /// LoginView
     /// - Parameter viewModel: LoginViewModel
     init(viewModel: LoginViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = State(initialValue: viewModel)
     }
     
     // MARK: - Body
@@ -33,7 +33,7 @@ struct LoginView: View {
                 .padding(.horizontal, 48)
             Spacer()
         }
-        .safeAreaPadding(.horizontal, 19)
+        .padding(.horizontal, 19)
         .task {
             UIApplication.shared.hideKeyboard()
         }
@@ -55,6 +55,7 @@ fileprivate struct LoginHeaderView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .multilineTextAlignment(.leading)
                     .lineLimit(2)
+                    .frame(height: 58)
 
                 Text("회원 서비스 이용을 위해 로그인 해주세요")
                     .foregroundStyle(Color.gray01)
@@ -66,7 +67,7 @@ fileprivate struct LoginHeaderView: View {
 
 /// 아이디, 비밀번호 입력 섹션
 fileprivate struct CredentialFieldsSection: View {
-    @ObservedObject var viewModel: LoginViewModel
+    @Bindable var viewModel: LoginViewModel
 
     var body: some View {
         VStack(spacing: 47) {

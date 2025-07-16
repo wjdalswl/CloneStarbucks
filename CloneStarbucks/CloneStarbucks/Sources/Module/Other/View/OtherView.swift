@@ -10,14 +10,15 @@ import SwiftUI
 struct OtherView: View {
     // MARK: - Properties
     
-    @StateObject private var viewModel: OtherViewModel
+    @State private var viewModel: OtherViewModel
+    @AppStorage("signupInfo") private var signupInfo: Data = Data()
     
     // MARK: - Init
     
     /// OtherView
     /// - Parameter viewModel: OtherViewModel
     init(viewModel: OtherViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = State(initialValue: viewModel)
     }
     
     // MARK: - Body
@@ -28,14 +29,13 @@ struct OtherView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 41) {
-                    headerSection(viewModel: viewModel)
-                        .padding(.top, 40)
+                    headerSection(nickname: viewModel.nickname(from: signupInfo))
                     
                     paySection()
                     
                     menuSection(title: "고객지원", items: CustomerSupportMenuItem.self)
                 }
-                .safeAreaPadding(.vertical, 83)
+                .padding(.vertical, 83)
                 .safeAreaPadding(.horizontal, 10)
             }
             .scrollIndicators(.hidden)
@@ -69,13 +69,13 @@ struct OtherView: View {
 
 /// 상단 환영 텍스트, 사각 아이콘 버튼 세션
 fileprivate struct headerSection: View {
-    @ObservedObject var viewModel: OtherViewModel
+    let nickname: String
     
     var body: some View {
         VStack(spacing: 24) {
             VStack(spacing: 5) {
                 (
-                    Text(viewModel.nickname)
+                    Text(nickname)
                         .foregroundStyle(Color.green01)
                     + Text("님")
                         .foregroundStyle(Color.black02)
@@ -110,6 +110,7 @@ fileprivate struct paySection: View {
         VStack(spacing: 0) {
             menuSection(title: "Pay", items: PayMenuItem.self)
             Divider()
+                .padding(.horizontal, 10)
         }
     }
 }
