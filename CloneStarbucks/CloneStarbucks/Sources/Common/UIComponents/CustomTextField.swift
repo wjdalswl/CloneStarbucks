@@ -11,9 +11,9 @@ struct CustomTextField: View {
     // MARK: - Properties
     
     @Binding private var text: String
-     private let placeholder: String
+    private let placeholder: String
     private let type: CustomTextFieldType
-
+    
     @FocusState private var isFocused: Bool
     
     // MARK: - Init
@@ -32,28 +32,26 @@ struct CustomTextField: View {
         self.placeholder = placeholder
         self.type = type
     }
-
+    
     var body: some View {
         VStack(spacing: type.underlineSpacing) {
-            ZStack(alignment: .leading) {
-                if text.isEmpty {
+            TextField(
+                "",
+                text: $text,
+                prompt:
                     Text(placeholder)
-                        .font(type.font)
-                        .foregroundStyle(Color.gray02)
-                }
-
-                TextField("", text: $text)
                     .font(type.font)
-                    .foregroundStyle(Color.black01)
-                    .tint(type.focusColor)
-                    .focused($isFocused)
-            }
-
-            Rectangle()
-                .frame(height: 1)
-                .frame(maxWidth: .infinity)
-                .foregroundStyle(isFocused ? type.focusColor : type.unfocusedColor)
+                    .foregroundStyle(Color.gray02)
+            )
+            .font(type.font)
+            .foregroundStyle(Color.black01)
+            .tint(type.focusColor)
+            .focused($isFocused)
+            
+            Divider()
+                .background(isFocused ? type.focusColor : type.unfocusedColor)
                 .animation(.easeInOut(duration: 0.2), value: isFocused)
+            
         }
     }
 }
