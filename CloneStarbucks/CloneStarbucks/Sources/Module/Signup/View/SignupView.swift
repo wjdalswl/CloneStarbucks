@@ -27,7 +27,7 @@ struct SignupView: View {
     var body: some View {
         VStack {
             CustomNavigationBar(
-                type: .backOnly,
+                type: .backAndTitle(title: "가입하기"),
                 onLeftTap: {
                     container.navigationRouter.pop()
                 },

@@ -9,5 +9,4 @@ import Foundation
 
 enum NavigationDestination: Equatable, Hashable {
     case signup
-    case productDetail(type: ProductType, id: UUID)
 }
