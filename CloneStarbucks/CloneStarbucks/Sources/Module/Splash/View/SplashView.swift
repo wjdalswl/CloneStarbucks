@@ -7,18 +7,31 @@
 
 import SwiftUI
 
-public struct SplashView: View {
-    public init() {}
+struct SplashView: View {
+    // MARK: - Properties
     
-    public var body: some View {
-        ZStack(alignment: .center) {
+    @EnvironmentObject private var appStateViewModel: AppStateViewModel
+    @AppStorage("signupInfo") private var signupInfo: Data = Data()
+    
+    // MARK: - Body
+
+    var body: some View {
+        ZStack {
             Color(.green01)
-                .ignoresSafeArea(edges: .all)
+                .ignoresSafeArea()
             
             Image(.starbucsLogo)
                 .resizable()
-                .scaledToFit()
                 .frame(width: 168, height: 168)
+        }
+        .task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            if let user = try? JSONDecoder().decode(SignupModel.self, from: signupInfo),
+               !user.nickname.isEmpty {
+                appStateViewModel.moveToTab()
+            } else {
+                appStateViewModel.moveToLogin()
+            }
         }
     }
 }

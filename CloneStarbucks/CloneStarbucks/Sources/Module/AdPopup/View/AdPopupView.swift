@@ -20,7 +20,7 @@ struct AdPopupView: View {
             Spacer()
             
         }
-        .edgesIgnoringSafeArea(.top)
+        .ignoresSafeArea(.all, edges: .top)
         .safeAreaInset(edge: .bottom) {
             AdBottomSection()
         }
