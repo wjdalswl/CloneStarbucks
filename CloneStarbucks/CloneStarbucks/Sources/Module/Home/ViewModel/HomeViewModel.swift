@@ -11,7 +11,7 @@ class HomeViewModel: ObservableObject {
     let recommendedCoffees: [CoffeeModel] = CoffeeMockData.mockCoffeeList
     let recommendedBreads: [BreadModel] = BreadMockData.mockBreadList
     let whatsNewItems: [AdModel] = AdMockData.mockAdList
-
+    
     let topBanners: [ImageResource] = [
         .banner2YellowEvent,
         .banner3ServiceSuscibe
@@ -28,4 +28,13 @@ class HomeViewModel: ObservableObject {
         .banner8Barista,
         .banner9SmileClub
     ]
+    
+    // MARK: - Methods
+    
+    func nickname(from data: Data) -> String {
+        if let user = try? JSONDecoder().decode(SignupModel.self, from: data) {
+            return user.nickname
+        }
+        return "(설정 닉네임)"
+    }
 }

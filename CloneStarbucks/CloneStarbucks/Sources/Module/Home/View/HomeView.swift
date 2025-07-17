@@ -11,7 +11,7 @@ struct HomeView: View {
     // MARK: - Properties
     
     @State private var viewModel: HomeViewModel
-    @AppStorage("nickname") private var nickname: String = ""
+    @AppStorage("signupInfo") private var signupInfo: Data = Data()
     
     // MARK: - Init
     
@@ -32,7 +32,7 @@ struct HomeView: View {
                 
                 RecommendedMenuView(
                     type: .coffee,
-                    nickname: nickname.isEmpty ? "(설정 닉네임)" : nickname,
+                    nickname: viewModel.nickname(from: signupInfo),
                     title: "님을 위한 추천메뉴",
                     recommendedItems: viewModel.recommendedCoffees
                 )
