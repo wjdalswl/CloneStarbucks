@@ -8,6 +8,6 @@
 import Foundation
 
 protocol LoginModel {
-    var id: String
-    var pwd: String
+    var id: String { get set }
+    var pwd: String { get set }
 }

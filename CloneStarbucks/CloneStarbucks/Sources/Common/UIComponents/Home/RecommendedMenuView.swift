@@ -61,7 +61,9 @@ struct RecommendedMenuView<T: Product>: View {
                             title: item.nameKr
                         )
                         .onTapGesture {
-                            // TODO: - 네비게이션 연결
+                            container.navigationRouter.push(
+                                to: .productDetail(type: type, id: item.id)
+                            )
                         }
                     }
                 }

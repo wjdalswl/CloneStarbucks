@@ -12,6 +12,8 @@ struct OtherView: View {
     
     @State private var viewModel: OtherViewModel
     @AppStorage("signupInfo") private var signupInfo: Data = Data()
+    @EnvironmentObject var appStateViewModel: AppStateViewModel
+    @EnvironmentObject var container: DIContainer
     
     // MARK: - Init
     
@@ -25,7 +27,13 @@ struct OtherView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            navigationBar
+            CustomNavigationBar(
+                type: .leftTitleAndLogout(title: "Other"),
+                onLeftTap: {},
+                onRightTap: {logout()}
+            )
+            .gnb()
+            .safeAreaPadding(.horizontal, 24)
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 41) {
@@ -45,25 +53,11 @@ struct OtherView: View {
     
     // MARK: - Methods
     
-    private var navigationBar: some View {
-        HStack {
-            Text("Other")
-                .font(.MainTextBold24)
-                .foregroundStyle(Color.black)
-
-            Spacer()
-
-            Button(action: {
-                print("로그아웃")
-            }) {
-                Image(.logout)
-            }
-        }
-        .padding(.horizontal, 24)
-        .padding(.top, 28)
-        .padding(.bottom, 16)
-        .background(Color.white)
-        .gnb()
+    /// 로그아웃 함수(AppStorage의 signupInfo 초기화, navigationRouter 초기화, appStateViewModel 로그인으로 이동 함수 호출)
+    private func logout() {
+        signupInfo = Data()
+        container.navigationRouter.popToRooteView()
+        appStateViewModel.moveToLogin()
     }
 }
 
