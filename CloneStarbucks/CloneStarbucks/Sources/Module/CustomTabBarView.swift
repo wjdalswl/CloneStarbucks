@@ -16,7 +16,7 @@ struct CustomTabBarView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            ContentView()
+            HomeView(viewModel: HomeViewModel())
                 .tag(TabBarItem.home)
 
             ContentView()
