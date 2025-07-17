@@ -27,6 +27,8 @@ struct OtherSquareButton: View {
         self.action = action
     }
     
+    // MARK: - Body
+    
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {

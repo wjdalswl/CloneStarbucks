@@ -11,31 +11,52 @@ struct LoginView: View {
     // MARK: - Properties
     
     @State private var viewModel: LoginViewModel
+    let onLoginSuccess: () -> Void
+    
+    @EnvironmentObject var container: DIContainer
     
     // MARK: - Init
     
     /// LoginView
     /// - Parameter viewModel: LoginViewModel
-    init(viewModel: LoginViewModel) {
+    /// - Parameter onLoginSuccess: 로그인 성공 여부 -> 스플래쉬에서 전환 시 사용
+    init(viewModel: LoginViewModel,
+         onLoginSuccess: @escaping () -> Void
+    ) {
         _viewModel = State(initialValue: viewModel)
+        self.onLoginSuccess = onLoginSuccess
     }
     
     // MARK: - Body
     
     var body: some View {
-        VStack {
-            Spacer()
-            LoginHeaderView()
-            Spacer()
-            CredentialFieldsSection(viewModel: viewModel)
-            Spacer()
-            LoginFooterView()
-                .padding(.horizontal, 48)
-            Spacer()
-        }
-        .padding(.horizontal, 19)
-        .task {
-            UIApplication.shared.hideKeyboard()
+        NavigationStack(path: $container.navigationRouter.destination) {
+            VStack {
+                Spacer()
+                LoginHeaderView()
+                Spacer()
+                CredentialFieldsSection(
+                    viewModel: viewModel,
+                    onLoginSuccess: onLoginSuccess
+                )
+                Spacer()
+                LoginFooterView()
+                    .padding(.horizontal, 48)
+                Spacer()
+            }
+            .padding(.horizontal, 19)
+            .task {
+                UIApplication.shared.hideKeyboard()
+            }
+            .navigationDestination(for: NavigationDestination.self) { destination in
+                switch destination {
+                case .signup:
+                    SignupView(viewModel: SignupViewModel())
+                    .environmentObject(container)
+                default:
+                    EmptyView()
+                }
+            }
         }
     }
 }
@@ -68,7 +89,12 @@ fileprivate struct LoginHeaderView: View {
 /// 아이디, 비밀번호 입력 섹션
 fileprivate struct CredentialFieldsSection: View {
     @Bindable var viewModel: LoginViewModel
-
+    let onLoginSuccess: () -> Void
+    
+    @AppStorage("signupInfo") private var signupInfo: Data = Data()
+    @State private var alertMessage: String = ""
+    @State private var showLoginFailureAlert: Bool = false
+    
     var body: some View {
         VStack(spacing: 47) {
             CustomTextField(
@@ -81,27 +107,43 @@ fileprivate struct CredentialFieldsSection: View {
             )
             
             MainBottomButton(
-                type: .login(
-                    isDisabled: viewModel.isLoginDisabled
-                ),
-                action: { print("로그인하기 클릭됨") }
+                type: .login(isDisabled: viewModel.isLoginDisabled),
+                action: {
+                    switch viewModel.verifyUser(from: signupInfo) {
+                    case .success:
+                        onLoginSuccess()
+                    case .failure(let message):
+                        alertMessage = message
+                        showLoginFailureAlert = true
+                    }
+                }
             )
             .disabled(viewModel.isLoginDisabled)
+            
+        }
+        .alert("로그인 실패", isPresented: $showLoginFailureAlert) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text(alertMessage)
         }
     }
 }
 
 /// 하단 소셜 로그인 섹션
 fileprivate struct LoginFooterView: View {
+    @EnvironmentObject var container: DIContainer
+
     var body: some View {
         VStack(spacing: 19) {
-            Button(action: {}) {
+            Button(action: {
+                container.navigationRouter.push(to: .signup)
+            }) {
                 Text("이메일로 회원가입하기")
                     .font(.MainTextRegular12)
                     .foregroundStyle(Color.gray04)
                     .underline(true, color: Color.gray04)
             }
-
+            
             SocialLoginButton(type: .kakao)
             SocialLoginButton(type: .apple)
         }
@@ -121,5 +163,9 @@ fileprivate struct LoginFooterView: View {
 }
 
 #Preview {
-    LoginView(viewModel: LoginViewModel())
+    LoginView(
+        viewModel: LoginViewModel(),
+        onLoginSuccess: {}
+    )
+    .environmentObject(DIContainer())
 }

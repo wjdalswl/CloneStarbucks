@@ -20,6 +20,8 @@ struct CustomTabBar: View {
         self._selectedTab = selectedTab
     }
     
+    // MARK: - Body
+    
     var body: some View {
         HStack {
             ForEach(TabBarItem.allCases) { tab in

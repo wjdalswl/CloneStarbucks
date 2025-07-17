@@ -27,6 +27,8 @@ struct CustomImageTextButton: View {
         self.action = action
     }
     
+    // MARK: - Body
+    
     var body: some View {
         Button(action: action) {
             HStack(spacing: 4) {

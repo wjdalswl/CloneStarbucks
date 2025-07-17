@@ -33,6 +33,8 @@ struct CustomTextField: View {
         self.type = type
     }
     
+    // MARK: - Body
+    
     var body: some View {
         VStack(spacing: type.underlineSpacing) {
             TextField(

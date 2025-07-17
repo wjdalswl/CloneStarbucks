@@ -11,7 +11,8 @@ struct SignupView: View {
     // MARK: - Properties
     
     @State private var viewModel: SignupViewModel
-    @AppStorage("signupInfo") private var signupInfo: Data = Data()
+    
+    @EnvironmentObject var container: DIContainer
     
     // MARK: - Init
     
@@ -25,28 +26,33 @@ struct SignupView: View {
     
     var body: some View {
         VStack {
+            CustomNavigationBar(
+                type: .backAndTitle(title: "가입하기"),
+                onLeftTap: {
+                    container.navigationRouter.pop()
+                },
+                onRightTap: {}
+            )
+            
             Spacer()
             
             SignupFieldSection(viewModel: viewModel)
             
             Spacer()
-                .frame(maxHeight: 428)
+                .frame(maxHeight: 400)
         }
         .safeAreaInset(edge: .bottom) {
             SignupBottomSection(
-                viewModel: viewModel,
-                onSignupComplete: {
-                    if let encoded = viewModel.encodeUser() {
-                        signupInfo = encoded
-                    }
-                }
+                viewModel: viewModel
             )
-            .safeAreaPadding(.horizontal, 19)
         }
+        .padding(.horizontal, 19)
         .task {
             UIApplication.shared.hideKeyboard()
         }
+        .navigationBarHidden(true)
     }
+    
 }
 
 /// 텍스트 필드 세션
@@ -71,22 +77,38 @@ fileprivate struct SignupFieldSection: View {
                 type: .signup
             )
         }
-        .padding(.horizontal, 19)
     }
 }
 
 /// 하단 버튼 세션
 fileprivate struct SignupBottomSection: View {
     var viewModel: SignupViewModel
-    let onSignupComplete: () -> Void
+    
+    @EnvironmentObject var container: DIContainer
+    @AppStorage("signupInfo") private var signupInfo: Data = Data()
+    @State private var showFailureAlert: Bool = false
+    @State private var alertMessage: String = ""
     
     var body: some View {
         MainBottomButton(
             type: .create(isDisabled: viewModel.isCreateDisabled),
-            action: onSignupComplete
+            action: {
+                if let encoded = viewModel.encodeUser() {
+                    signupInfo = encoded
+                    container.navigationRouter.pop()
+                } else {
+                    alertMessage = "회원 정보 저장에 실패했어요. 다시 시도해주세요."
+                    showFailureAlert = true
+                }
+            }
         )
         .disabled(viewModel.isCreateDisabled)
         .safeAreaPadding(.bottom, 20)
+        .alert("회원가입 실패", isPresented: $showFailureAlert) {
+            Button("확인", role: .cancel) {}
+        } message: {
+            Text(alertMessage)
+        }
     }
 }
 
