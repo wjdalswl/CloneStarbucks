@@ -26,6 +26,7 @@ struct MainBottomButton: View {
         self.type = type
         self.action = action
     }
+    // MARK: - Body
     
     var body: some View {
         Button(action: action) {
